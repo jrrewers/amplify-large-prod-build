@@ -76,7 +76,7 @@ constructor(private amplify: AmplifyService) {}
 ...
 <amplify-authenticator></amplify-authenticator>
 
-x. Create prod build once again
+9. Create prod build once again
 102 files, about 3 MB size 
 
 Adding service to constructor and using amplify-authenticator causes prod build to create lot of files in prod build and significantly increases build time
