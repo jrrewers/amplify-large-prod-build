@@ -1,27 +1,82 @@
 # NgTest
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
+This project was created to reproduce many files in prouction build issue with AWS Amplify.
 
-## Development server
+Steps to reproduce:
+1. Create new project:
+ng new someName
+cd someName
+npm install
+npm install aws-amplify-angular --save
+npm install aws-amplify --save
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+2. Create config file
+export const gatewayUrl = 'https://sdssdsfsf.execute-api.eu-west-1.amazonaws.com/sdsdsdsdsd/'
+export const myEndopint = {
+  name: 'myEndopint',
+  endpoint: `${gatewayUrl}myEndopint`,
+  region: 'eu-west-1'
+}
+export const awsConfig = {
+  Auth: {
+    identityPoolId: 'pool_id',
+    region: 'eu-west-1',
+    userPoolId: 'pool_id',
+    userPoolWebClientId: 'webclientid',
+  },
+  API: {
+    endpoints: [myEndopint]
+  }
+}
 
-## Code scaffolding
+3.Initialize Amplify in main.ts
+import Amplify from 'aws-amplify';
+import {awsConfig} from './aws-config'
+Amplify.configure(awsConfig);
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+4.Modify app.module.ts
 
-## Build
+import {AmplifyAngularModule, AmplifyService} from 'aws-amplify-angular';
+...
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+@NgModule({
+ ...
+  imports: [
+	...
+    AmplifyAngularModule,
+  ],
+  providers: [
+    ...,
+    AmplifyService
+  ],
+})
 
-## Running unit tests
+5. Modify tsconfig.app.json
+...
+"compilerOptions": {
+ ...,
+ "types": ["node"]
+}
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+6. Modify polyfills.ts
+...
+(window as any).global = window;
 
-## Running end-to-end tests
+6. Create prod build
+ng build --prod
+4 files, about 1.2 MB size are created in dist/
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+7. Add amplify service to app.component.ts 
+import {AmplifyService} from 'aws-amplify-angular';
+...
 
-## Further help
+constructor(private amplify: AmplifyService) {}
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+8. Add amplify-authenticator in app.component.html
+...
+<amplify-authenticator></amplify-authenticator>
+
+x. Create prod build once again
+102 files, about 3 MB size 
+
+Adding service to constructor and using amplify-authenticator causes prod build to create lot of files in prod build and significantly increases build time
