@@ -1,6 +1,6 @@
 # NgTest
 
-This project was created to reproduce many files in prouction build issue with AWS Amplify.
+This project was created to reproduce many files issue in prouction build issue with AWS Amplify.
 
 Steps to reproduce:
 1. Create new project:
